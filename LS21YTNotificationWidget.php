@@ -8,7 +8,7 @@ class LS21YTNotificationWidget
     public $height = 2;
     public $params = [
         'yt_notification_tag' => 'The tag used to mark notifications. (defaults to yt_info_request)',
-        'limit' => 'How many notification events should be listed? Defaults to 20'
+        'limit' => 'How many notification events should be listed? Defaults to 100'
     ];
     public $description = 'Monitor incoming events based on your own filters.';
     public $cacheLifetime = 3;
@@ -21,7 +21,7 @@ class LS21YTNotificationWidget
         }
         $this->Event = ClassRegistry::init('Event');
         $params = [
-            'limit' => 20,
+            'limit' => 100,
             'page' => 1,
             'order' => 'Event.id DESC',
             'metadata' => 1,

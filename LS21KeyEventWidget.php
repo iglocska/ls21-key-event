@@ -8,7 +8,7 @@ class LS21KeyEventWidget
     public $height = 2;
     public $params = [
         'key_event_tag' => 'The tag used to mark key events. (defaults to key_event)',
-        'limit' => 'How many events should be listed? Defaults to 5',
+        'limit' => 'How many events should be listed? Defaults to 20',
         'page' => 'Which page do you wish to view? (Default: 1)',
         'org' => 'organisation ID, or list of organisations IDs to filter on'
     ];
@@ -24,7 +24,7 @@ class LS21KeyEventWidget
         }
         $this->Event = ClassRegistry::init('Event');
         $params = [
-            'limit' => 5,
+            'limit' => 500,
             'page' => 1,
             'extensionList' => 1,
             'order' => 'Event.id DESC',
