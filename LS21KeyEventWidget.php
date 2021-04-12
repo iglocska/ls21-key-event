@@ -9,12 +9,13 @@ class LS21KeyEventWidget
     public $params = [
         'key_event_tag' => 'The tag used to mark key events. (defaults to key_event)',
         'limit' => 'How many events should be listed? Defaults to 5',
-        'page' => 'Which page do you wish to view? (Default: 1)'
+        'page' => 'Which page do you wish to view? (Default: 1)',
+        'org' => 'organisation ID, or list of organisations IDs to filter on'
     ];
     public $description = 'Monitor incoming events based on your own filters.';
     public $cacheLifetime = false;
     public $autoRefreshDelay = 60;
-    private $__default_fields = ['title', 'overview', 'capability', 'impact', 'actions', 'status', 'related'];
+    private $__default_fields = ['organisation', 'title', 'overview', 'capability', 'impact', 'actions', 'status', 'related'];
 
 	public function handler($user, $options = array())
 	{
@@ -30,6 +31,13 @@ class LS21KeyEventWidget
             'tags' => [$options['key_event_tag']]
         ];
         $field_options = [
+            'organisation' => [
+                'name' => 'Org',
+                'data_path' => 'Orgc.name',
+                'url' => Configure::read('MISP.baseurl') . '/organisations/view',
+                'url_params_data_paths' => 'Orgc.id',
+                'element' => 'links'
+            ],
             'title' => [
                 'name' => 'Title',
                 'url' => Configure::read('MISP.baseurl') . '/events/view',
@@ -69,6 +77,10 @@ class LS21KeyEventWidget
         if (empty($options['fields'])) {
             $options['fields'] = $this->__default_fields;
         }
+        $preFilter = [];
+        if (!empty($options['org'])) {
+            $preFilter['org'] = $options['org'];
+        }
         foreach ($options['fields'] as $field) {
             if (!empty($field_options[$field])) {
                 $fields[] = $field_options[$field];
@@ -77,6 +89,12 @@ class LS21KeyEventWidget
         foreach (['limit', 'page'] as $field) {
             if (!empty($options[$field])) {
                 $params[$field] = $options[$field];
+            }
+        }
+        if (!empty($preFilter)) {
+            $params['eventid'] = $this->Event->filterEventIds($user, $preFilter);
+            if (empty($params['eventid'])) {
+                $params['eventid'] = [-1];
             }
         }
         $events = $this->Event->fetchEvent($user, $params);
@@ -114,6 +132,10 @@ class LS21KeyEventWidget
                         'Event' => [
                             'id' => $event['Event']['id'],
                             'info' => $event['Event']['info']
+                        ],
+                        'Orgc' => [
+                            'id' => $event['Orgc']['id'],
+                            'name' => $event['Orgc']['name']
                         ],
                         'KeyEvent' => $keyEventExtracted,
                         'ExtendedBy' => [
