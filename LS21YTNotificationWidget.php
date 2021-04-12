@@ -7,7 +7,7 @@ class LS21YTNotificationWidget
     public $width = 4;
     public $height = 2;
     public $params = [
-        'yt_notification_tag' => 'The tag used to mark notifications. (defaults to yt_notification)',
+        'yt_notification_tag' => 'The tag used to mark notifications. (defaults to yt_info_request)',
         'limit' => 'How many notification events should be listed? Defaults to 20'
     ];
     public $description = 'Monitor incoming events based on your own filters.';
@@ -17,7 +17,7 @@ class LS21YTNotificationWidget
 	public function handler($user, $options = array())
 	{
         if (empty($options['yt_notification'])) {
-            $options['yt_notification'] = 'yt_notification';
+            $options['yt_notification'] = 'yt_info_request';
         }
         $this->Event = ClassRegistry::init('Event');
         $params = [
